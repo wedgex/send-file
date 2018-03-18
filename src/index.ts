@@ -74,16 +74,19 @@ server.onHeartbeat((heartbeat: MessageServer.Heartbeat, rinfo: AddressInfo) => {
   const user = User.find(users, heartbeat.hostname);
 
   if (user) {
-    users = [User.touch(user), ...users.filter(u => u.name !== user.name)];
+    users = User.sort([
+      User.touch(user),
+      ...users.filter(u => u.name !== user.name)
+    ]);
   } else {
-    users = [
+    users = User.sort([
       User.create({
         name: heartbeat.hostname,
         address: rinfo.address,
         port: rinfo.port
       }),
       ...users
-    ];
+    ]);
   }
   if (mainWindow) mainWindow.webContents.send("users-updated", users);
   console.log(users);

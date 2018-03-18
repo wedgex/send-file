@@ -34,6 +34,13 @@ export function find(users: User[], name: string): User | undefined {
   return users.find(user => user.name === name);
 }
 
+export function sort(users: User[]): User[] {
+  return users.sort((a: User, b: User): number => {
+    if (isOnline(a) && !isOnline(b)) return -1;
+    return a.name.localeCompare(b.name);
+  });
+}
+
 export function rehydrateDates(users: User[]): User[] {
   return users.map(user => ({ ...user, lastSeen: new Date(user.lastSeen) }));
 }
