@@ -64,11 +64,28 @@ app.on("activate", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 import * as MessageServer from "./message_server";
+import * as User from "./user";
 import { AddressInfo } from "dgram";
 const server = MessageServer.create();
 
+let users: User.User[] = [];
+
 server.onHeartbeat((heartbeat: MessageServer.Heartbeat, rinfo: AddressInfo) => {
-  console.log("heartbeat", heartbeat, rinfo);
+  const user = User.find(users, heartbeat.hostname);
+
+  if (user) {
+    users = [User.touch(user), ...users.filter(u => u.name !== user.name)];
+  } else {
+    users = [
+      User.create({
+        name: heartbeat.hostname,
+        address: rinfo.address,
+        port: rinfo.port
+      }),
+      ...users
+    ];
+  }
+  console.log(users);
 });
 
 server.bind();
