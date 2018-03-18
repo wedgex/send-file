@@ -33,3 +33,13 @@ export function touch(user: User): User {
 export function find(users: User[], name: string): User | undefined {
   return users.find(user => user.name === name);
 }
+
+export function rehydrateDates(users: User[]): User[] {
+  return users.map(user => ({ ...user, lastSeen: new Date(user.lastSeen) }));
+}
+
+export function isOnline(user: User): boolean {
+  const lastSeenSecondsAgo =
+    (new Date().getTime() - user.lastSeen.getTime()) / 1000;
+  return lastSeenSecondsAgo < 30;
+}

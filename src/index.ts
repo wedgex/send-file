@@ -64,7 +64,7 @@ app.on("activate", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 import * as MessageServer from "./message_server";
-import * as User from "./user";
+import * as User from "./User";
 import { AddressInfo } from "dgram";
 const server = MessageServer.create();
 
@@ -85,6 +85,7 @@ server.onHeartbeat((heartbeat: MessageServer.Heartbeat, rinfo: AddressInfo) => {
       ...users
     ];
   }
+  if (mainWindow) mainWindow.webContents.send("users-updated", users);
   console.log(users);
 });
 
