@@ -1,11 +1,14 @@
 import * as dgram from "dgram";
 
+const BROADCAST_IP = "230.185.192.108";
+const PORT = 8383;
+
 export function create() {
   const server = dgram.createSocket("udp4");
 
   function bind() {
-    server.bind(8383, () => {
-      server.addMembership("230.185.192.108");
+    server.bind(PORT, () => {
+      server.addMembership(BROADCAST_IP);
       server.setBroadcast(true);
       server.setMulticastTTL(128);
       //server.setMulticastLoopback(false);
@@ -13,7 +16,7 @@ export function create() {
   }
 
   function send(msg: string) {
-    server.send(msg, 8383, "230.185.192.108");
+    server.send(msg, PORT, BROADCAST_IP);
   }
 
   function onMessage(
