@@ -9,7 +9,8 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "tslint --project tsconfig.json --type-check --force"
+    "lint": "tslint --project tsconfig.json --type-check --force",
+    "test": "jest"
   },
   "keywords": [],
   "author": "hhaydel",
@@ -17,16 +18,9 @@
   "config": {
     "forge": {
       "make_targets": {
-        "win32": [
-          "squirrel"
-        ],
-        "darwin": [
-          "zip"
-        ],
-        "linux": [
-          "deb",
-          "rpm"
-        ]
+        "win32": ["squirrel"],
+        "darwin": ["zip"],
+        "linux": ["deb", "rpm"]
       },
       "electronPackagerConfig": {
         "packageManager": "yarn"
@@ -46,6 +40,13 @@
       }
     }
   },
+  "jest": {
+    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/tests/preprocessor.js"
+    },
+    "testMatch": ["**/__tests__/*.+(ts|tsx|js)", "**/*.test.+(ts|tsx|js)"]
+  },
   "dependencies": {
     "@types/electron-devtools-installer": "^2.0.2",
     "@types/react": "^0.14.55",
@@ -60,11 +61,13 @@
     "tslib": "^1.4.0"
   },
   "devDependencies": {
+    "@types/jest": "^22.2.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "electron-forge": "^5.1.1",
     "electron-prebuilt-compile": "1.8.3",
+    "jest": "^22.4.2",
     "tslint": "^5.1.0",
     "typescript": "~2.2.2"
   }
