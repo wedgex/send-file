@@ -65,6 +65,7 @@ app.on("activate", () => {
 // code. You can also put them in separate files and import them here.
 import * as MessageServer from "./message_server";
 import * as User from "./User";
+import * as FileServer from "./FileTransfer/server";
 import { AddressInfo } from "dgram";
 const server = MessageServer.create();
 
@@ -89,7 +90,6 @@ server.onHeartbeat((heartbeat: MessageServer.Heartbeat, rinfo: AddressInfo) => {
     ]);
   }
   if (mainWindow) mainWindow.webContents.send("users-updated", users);
-  console.log(users);
 });
 
 server.bind();
@@ -97,3 +97,6 @@ server.bind();
 setInterval(() => {
   server.sendHeartbeat();
 }, 1000);
+
+const fileServer = FileServer.create();
+fileServer.start();
