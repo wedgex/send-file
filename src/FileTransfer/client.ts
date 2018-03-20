@@ -1,17 +1,21 @@
 import * as net from "net";
 import * as fs from "fs";
 import { basename } from "path";
+import * as FileTransfer from "./index";
 
-export function client(address: string, port: number) {
+export function create(address: string, port: number) {
   const client = new net.Socket();
 
   function sendFile(filepath: string) {
-    const fileStream = fs.createReadStream(filepath);
     client.on("data", data => {
-      const response = data.toString();
-      if (response === "yes") fileStream.pipe(client);
-      else client.end();
+      if (data.toString() === FileTransfer.Response.Yes) {
+        fs.createReadStream(filepath).pipe(client);
+      } else {
+        client.end();
+      }
     });
+
+    client.on("end", client.end);
 
     client.connect(port, address, () => {
       client.write(basename(filepath));
