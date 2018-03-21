@@ -12,10 +12,10 @@ ipcRenderer.on("users-updated", (_: Electron.Event, newUsers: User[]) => {
 });
 
 export function render() {
-  const { App } = require("./app");
+  const MainWindow = require("../Windows/components/Main").default;
   ReactDOM.render(
     <AppContainer>
-      <App users={users} />
+      <MainWindow users={users} />
     </AppContainer>,
     document.getElementById("App")
   );
