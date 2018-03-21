@@ -5,18 +5,18 @@ export interface Heartbeat {
   hostname: string;
 }
 
-export function createHeartbeat(): Heartbeat {
+export function create(): Heartbeat {
   return {
     type: "heartbeat",
     hostname: hostname()
   };
 }
 
-export function encodeHeartbeat(): string {
-  return JSON.stringify(createHeartbeat());
+export function encode(): string {
+  return JSON.stringify(create());
 }
 
-export function decodeHeartbeat(msg: string): Heartbeat {
+export function decode(msg: string): Heartbeat {
   const json = JSON.parse(msg);
   return json.type === "heartbeat" ? json : null;
 }

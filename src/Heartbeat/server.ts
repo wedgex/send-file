@@ -6,14 +6,14 @@ export function create() {
   const server = Server.create();
 
   function sendHeartbeat() {
-    server.send(Heartbeat.encodeHeartbeat());
+    server.send(Heartbeat.encode());
   }
 
   function onHeartbeat(
     handleHeartbeat: (msg: Heartbeat.Heartbeat, rinfo: dgram.AddressInfo) => void
   ) {
     server.onMessage((msg, rinfo) => {
-      const heartbeat = Heartbeat.decodeHeartbeat(msg);
+      const heartbeat = Heartbeat.decode(msg);
       if (heartbeat) {
         handleHeartbeat(heartbeat, rinfo);
       }
