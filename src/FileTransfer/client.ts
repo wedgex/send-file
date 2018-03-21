@@ -15,8 +15,6 @@ export function create(address: string, port: number) {
       }
     });
 
-    client.on("end", client.end);
-
     client.connect(port, address, () => {
       client.write(basename(filepath));
     });
@@ -24,6 +22,6 @@ export function create(address: string, port: number) {
 
   return {
     sendFile,
-    on: client.on
+    end: client.end
   };
 }

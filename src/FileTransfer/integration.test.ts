@@ -1,0 +1,30 @@
+import * as Client from './client'
+import * as Server from './server'
+import * as fs from 'fs'
+
+describe('FileTransfer Integration', () => {
+  const port = 3335
+  const testFilePath = './tests/mocks/testFile.txt'
+  let testFile: Buffer
+  let server: Server.Server
+
+  beforeEach(() => {
+    testFile = fs.readFileSync(testFilePath)
+    server = Server.create({ port })
+  })
+
+  afterEach(done => {
+    server.stop(done)
+  })
+
+  it('sends and receives file', done => {
+    server.onTransferRequest((_, accept) => accept())
+    server.onTransfer((file: Buffer) => {
+      expect(file).toEqual(testFile)
+      done()
+    })
+    server.start()
+    const client = Client.create('localhost', port)
+    client.sendFile(testFilePath)
+  })
+})

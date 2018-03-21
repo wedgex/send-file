@@ -1,37 +1,76 @@
 import * as net from "net";
-import * as fs from "fs";
+import * as FileTransfer from './index';
 
-export function create() {
-  function start() {
-    const server = net.createServer();
-    server.on("connection", socket => {
-      console.log("connected");
-      let fileStream: fs.WriteStream;
-      socket.on("data", data => {
-        console.log("got some data");
-        if (fileStream) {
-          console.log("write");
-          fileStream.write(data);
-        } else {
-          console.log("got the file name, create stream");
-          fileStream = fs.createWriteStream(data.toString());
-          socket.write("yes");
-        }
-      });
+const PORT = 8383
 
-      socket.on("error", () => {
-        console.log("error");
-        fileStream.close();
-      });
+export interface Server {
+  start: () => void,
+  stop: (callback?: Function) => void,
+  onTransferRequest: (handler: (filename: string, accept: () => void, reject: () => void) => void) => void,
+  onTransfer: (handler: (data: Buffer) => void) => void,
+}
 
-      socket.on("close", () => {
-        console.log("close");
-        fileStream.close();
-      });
-    });
-    server.listen(8384);
+function createConnection(onRequest: (
+  filename: string,
+  accept: () => void,
+  reject: () => void
+) => void, onFile: (data: Buffer) => void) {
+  return (socket: net.Socket) => {
+    let filename: string
+    let fileParts: Buffer[] = []
+
+    const accept = () => {
+      socket.write(FileTransfer.Response.Yes)
+      socket.on('data', handleFile)
+    }
+    const reject = () => {
+      socket.write(FileTransfer.Response.No)
+    }
+
+    const handleFile = (data: Buffer) => {
+      fileParts.push(data)
+    }
+
+    const handleFileRequest = (data: Buffer) => {
+      filename = data.toString()
+      if (onRequest) onRequest(filename, accept, reject)
+    }
+
+    socket.once('data', handleFileRequest)
+    socket.on('end', () => {
+      if (onFile && fileParts.length) onFile(Buffer.concat(fileParts))
+    })
   }
+}
+
+export function create({ port = PORT }: { port: number }) {
+  let handleTransferRequest: (filename: string, accept: () => void, reject: () => void) => void
+  let handleTransfer: (data: Buffer) => void
+
+  const server = net.createServer((socket: net.Socket) => {
+    createConnection(handleTransferRequest, handleTransfer)(socket)
+  });
+
+  function onTransferRequest(handler: (filename: string, accept: () => void, reject: () => void) => void) {
+    handleTransferRequest = handler
+  }
+
+  function onTransfer(hanlder: (data: Buffer) => void) {
+    handleTransfer = hanlder
+  }
+
+  function start() {
+    server.listen(port);
+  }
+
+  function stop(callback?: Function) {
+    server.close(callback)
+  }
+
   return {
-    start
+    start,
+    stop,
+    onTransferRequest,
+    onTransfer,
   };
 }
