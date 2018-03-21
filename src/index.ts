@@ -1,7 +1,5 @@
 import { app, BrowserWindow } from "electron";
-import installExtension, {
-  REACT_DEVELOPER_TOOLS
-} from "electron-devtools-installer";
+import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
 import { enableLiveReload } from "electron-compile";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -65,7 +63,6 @@ app.on("activate", () => {
 // code. You can also put them in separate files and import them here.
 import * as MessageServer from "./message_server";
 import * as User from "./User";
-import * as FileServer from "./FileTransfer/server";
 import { AddressInfo } from "dgram";
 const server = MessageServer.create();
 
@@ -75,10 +72,7 @@ server.onHeartbeat((heartbeat: MessageServer.Heartbeat, rinfo: AddressInfo) => {
   const user = User.find(users, heartbeat.hostname);
 
   if (user) {
-    users = User.sort([
-      User.touch(user),
-      ...users.filter(u => u.name !== user.name)
-    ]);
+    users = User.sort([User.touch(user), ...users.filter(u => u.name !== user.name)]);
   } else {
     users = User.sort([
       User.create({
@@ -97,6 +91,3 @@ server.bind();
 setInterval(() => {
   server.sendHeartbeat();
 }, 1000);
-
-const fileServer = FileServer.create();
-fileServer.start();
