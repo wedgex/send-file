@@ -9,7 +9,6 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "tslint --project tsconfig.json --type-check --force",
     "test": "jest"
   },
   "keywords": [],
@@ -68,7 +67,6 @@
     "electron-forge": "^5.1.1",
     "electron-prebuilt-compile": "1.8.3",
     "jest": "^22.4.2",
-    "tslint": "^5.1.0",
     "typescript": "~2.2.2"
   }
 }
