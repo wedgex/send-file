@@ -61,6 +61,7 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+import { ipcMain } from "electron";
 import * as Heartbeats from "./Heartbeats";
 import * as HeartbeatsServer from "./Heartbeats/server";
 import * as HeartbeatsClient from "./Heartbeats/client";
@@ -82,6 +83,13 @@ heartbeatServer.onHeartbeat((heartbeat: Heartbeats.Heartbeat, rinfo: AddressInfo
 
   if (mainWindow) mainWindow.webContents.send("users-updated", users);
 });
+
+ipcMain.on(
+  "send-files-to-user",
+  (_: Electron.Event, { user, files }: { user: Users.User; files: string[] }) => {
+    console.log("event", user, files);
+  }
+);
 
 heartbeatServer.bind();
 heartbeatClient.bind();

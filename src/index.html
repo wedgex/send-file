@@ -11,6 +11,15 @@
 
 <script>window.exports = module.exports</script>
 <script type="text/tsx">
+  document.addEventListener('dragover',function(event){
+    event.preventDefault();
+    return false;
+  },false);
+
+  document.addEventListener('drop',function(event){
+    event.preventDefault();
+    return false;
+  },false);
   import * as App from './app'
   App.render();
   if (module.hot) { module.hot.accept(App.render); }
