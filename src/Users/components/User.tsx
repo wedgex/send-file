@@ -1,5 +1,6 @@
 import { ipcRenderer } from "electron";
 import * as React from "react";
+import { SEND_FILE } from "../../app/events";
 import { User, isOnline } from "../index";
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 };
 
 function sendFiles(user: User, files: string[]) {
-  ipcRenderer.send("send-files-to-user", {
+  ipcRenderer.send(SEND_FILE, {
     user,
     files
   });

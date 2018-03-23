@@ -3,10 +3,11 @@ import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
 import { ipcRenderer } from "electron";
 import { User, rehydrateDates } from "../Users";
+import { USERS_UPDATED } from "./events";
 
 let users: User[] = [];
 
-ipcRenderer.on("users-updated", (_: Electron.Event, newUsers: User[]) => {
+ipcRenderer.on(USERS_UPDATED, (_: Electron.Event, newUsers: User[]) => {
   users = rehydrateDates(newUsers);
   render();
 });

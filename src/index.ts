@@ -64,13 +64,15 @@ app.on("activate", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 import { ipcMain } from "electron";
+import { AddressInfo } from "dgram";
 import * as Heartbeats from "./Heartbeats";
 import * as HeartbeatsServer from "./Heartbeats/server";
 import * as HeartbeatsClient from "./Heartbeats/client";
 import * as FileTransfersServer from "./FileTransfers/server";
 import * as FileTransfersClient from "./FileTransfers/client";
 import * as Users from "./Users";
-import { AddressInfo } from "dgram";
+import { SEND_FILE, USERS_UPDATED } from "./app/events";
+
 const heartbeatServer = HeartbeatsServer.create(8383);
 const heartbeatClient = HeartbeatsClient.create(8384, 8383);
 const fileServer = FileTransfersServer.create({
