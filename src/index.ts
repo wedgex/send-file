@@ -92,6 +92,12 @@ heartbeatServer.onHeartbeat((heartbeat: Heartbeat.Heartbeat, rinfo: AddressInfo)
 heartbeatServer.bind();
 heartbeatClient.bind();
 
-setInterval(() => {
+const heartbeatInterval = setInterval(() => {
   heartbeatClient.send(Heartbeat.create({}));
 }, 1000);
+
+app.on("window-all-closed", () => {
+  clearInterval(heartbeatInterval);
+  heartbeatServer.close();
+  heartbeatClient.close();
+});
