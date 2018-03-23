@@ -63,13 +63,15 @@ app.on("activate", () => {
 // code. You can also put them in separate files and import them here.
 import * as Heartbeat from "./Heartbeat";
 import * as HeartbeatServer from "./Heartbeat/server";
+import * as HeartbeatClient from "./Heartbeat/client";
 import * as User from "./User";
 import { AddressInfo } from "dgram";
-const server = HeartbeatServer.create();
+const heartbeatServer = HeartbeatServer.create(8383);
+const heartbeatClient = HeartbeatClient.create(8384, 8383);
 
 let users: User.User[] = [];
 
-server.onHeartbeat((heartbeat: Heartbeat.Heartbeat, rinfo: AddressInfo) => {
+heartbeatServer.onHeartbeat((heartbeat: Heartbeat.Heartbeat, rinfo: AddressInfo) => {
   const user = User.find(users, heartbeat.hostname);
 
   if (user) {
@@ -87,8 +89,9 @@ server.onHeartbeat((heartbeat: Heartbeat.Heartbeat, rinfo: AddressInfo) => {
   if (mainWindow) mainWindow.webContents.send("users-updated", users);
 });
 
-server.bind();
+heartbeatServer.bind();
+heartbeatClient.bind();
 
 setInterval(() => {
-  server.sendHeartbeat();
+  heartbeatClient.send(Heartbeat.create({}));
 }, 1000);

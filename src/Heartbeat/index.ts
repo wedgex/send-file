@@ -1,19 +1,23 @@
-import { hostname } from "os";
+import { hostname as osHostname } from "os";
 
 export interface Heartbeat {
   type: "heartbeat";
   hostname: string;
 }
 
-export function create(): Heartbeat {
+export type HeartbeatFields = {
+  hostname?: string;
+};
+
+export function create(fields: HeartbeatFields): Heartbeat {
   return {
     type: "heartbeat",
-    hostname: hostname()
+    hostname: fields.hostname || osHostname()
   };
 }
 
-export function encode(): string {
-  return JSON.stringify(create());
+export function encode(heartbeat: Heartbeat): string {
+  return JSON.stringify(heartbeat);
 }
 
 export function decode(msg: string): Heartbeat {

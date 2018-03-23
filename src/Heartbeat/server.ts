@@ -1,28 +1,37 @@
-import * as Server from "../server";
 import * as dgram from "dgram";
 import * as Heartbeat from "./index";
 
-export function create() {
-  const server = Server.create();
+const PORT = 8383;
+const BROADCAST_IP = "230.185.192.108";
 
-  function sendHeartbeat() {
-    server.send(Heartbeat.encode());
+export function create(port: number = PORT) {
+  const server = dgram.createSocket("udp4");
+
+  function bind() {
+    server.bind(port, () => {
+      server.addMembership(BROADCAST_IP);
+      server.setBroadcast(true);
+      server.setMulticastTTL(128);
+      server.setMulticastLoopback(false);
+    });
   }
 
   function onHeartbeat(
     handleHeartbeat: (msg: Heartbeat.Heartbeat, rinfo: dgram.AddressInfo) => void
   ) {
-    server.onMessage((msg, rinfo) => {
-      const heartbeat = Heartbeat.decode(msg);
-      if (heartbeat) {
-        handleHeartbeat(heartbeat, rinfo);
-      }
+    server.on("message", (msg, rinfo) => {
+      const heartbeat = Heartbeat.decode(msg.toString());
+      if (heartbeat) handleHeartbeat(heartbeat, rinfo);
     });
   }
 
+  function close(callback?: () => void) {
+    server.close(callback);
+  }
+
   return {
-    bind: server.bind,
-    sendHeartbeat,
-    onHeartbeat
+    bind,
+    onHeartbeat,
+    close
   };
 }
