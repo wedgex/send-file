@@ -72,20 +72,14 @@ const heartbeatClient = HeartbeatClient.create(8384, 8383);
 let users: User.User[] = [];
 
 heartbeatServer.onHeartbeat((heartbeat: Heartbeat.Heartbeat, rinfo: AddressInfo) => {
-  const user = User.find(users, heartbeat.hostname);
+  const user = User.create({
+    name: heartbeat.hostname,
+    address: rinfo.address,
+    port: rinfo.port
+  });
 
-  if (user) {
-    users = User.sort([User.touch(user), ...users.filter(u => u.name !== user.name)]);
-  } else {
-    users = User.sort([
-      User.create({
-        name: heartbeat.hostname,
-        address: rinfo.address,
-        port: rinfo.port
-      }),
-      ...users
-    ]);
-  }
+  users = User.addOrUpdate(users, user);
+
   if (mainWindow) mainWindow.webContents.send("users-updated", users);
 });
 

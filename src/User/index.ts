@@ -29,6 +29,11 @@ export function touch(user: User): User {
   };
 }
 
+export function addOrUpdate(users: User[], user: User): User[] {
+  // TODO name isn't good enough to use as a identifier
+  return sort([user, ...users.filter(u => u.name !== user.name)]);
+}
+
 // TODO name isn't really unique but will do for now.
 export function find(users: User[], name: string): User | undefined {
   return users.find(user => user.name === name);
@@ -46,7 +51,6 @@ export function rehydrateDates(users: User[]): User[] {
 }
 
 export function isOnline(user: User): boolean {
-  const lastSeenSecondsAgo =
-    (new Date().getTime() - user.lastSeen.getTime()) / 1000;
+  const lastSeenSecondsAgo = (new Date().getTime() - user.lastSeen.getTime()) / 1000;
   return lastSeenSecondsAgo < 30;
 }
