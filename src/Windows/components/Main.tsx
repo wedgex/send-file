@@ -1,6 +1,6 @@
 import * as React from "react";
-import { User } from "../../User";
-import UserComponent from "../../User/components/User";
+import { User } from "../../Users";
+import UserComponent from "../../Users/components/User";
 
 export type Props = {
   users: User[];

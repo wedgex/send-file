@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
 import { ipcRenderer } from "electron";
-import { User, rehydrateDates } from "../User";
+import { User, rehydrateDates } from "../Users";
 
 let users: User[] = [];
 

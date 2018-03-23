@@ -1,9 +1,9 @@
 import * as Client from "./client";
 import * as net from "net";
 import * as fs from "fs";
-import * as FileTransfer from "./index";
+import * as FileTransfers from "./index";
 
-describe("FileTransfer/Client", () => {
+describe("FileTransfers/Client", () => {
   let server: net.Server;
   let filename: string;
 
@@ -19,7 +19,7 @@ describe("FileTransfer/Client", () => {
     server.on("connection", socket => {
       const declineFile = (data: Buffer) => {
         filename = data.toString();
-        socket.write(FileTransfer.Response.No);
+        socket.write(FileTransfers.Response.No);
       };
 
       socket.on("data", declineFile);
@@ -46,7 +46,7 @@ describe("FileTransfer/Client", () => {
 
       const acceptFile = (data: Buffer) => {
         filename = data.toString();
-        socket.write(FileTransfer.Response.Yes);
+        socket.write(FileTransfers.Response.Yes);
         socket.removeListener("data", acceptFile);
         socket.on("data", getFile);
       };

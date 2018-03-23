@@ -1,5 +1,5 @@
 import * as dgram from "dgram";
-import * as Heartbeat from "./index";
+import * as Heartbeats from "./index";
 
 const PORT = 8383;
 const BROADCAST_IP = "230.185.192.108";
@@ -17,10 +17,10 @@ export function create(port: number = PORT) {
   }
 
   function onHeartbeat(
-    handleHeartbeat: (msg: Heartbeat.Heartbeat, rinfo: dgram.AddressInfo) => void
+    handleHeartbeat: (msg: Heartbeats.Heartbeat, rinfo: dgram.AddressInfo) => void
   ) {
     server.on("message", (msg, rinfo) => {
-      const heartbeat = Heartbeat.decode(msg.toString());
+      const heartbeat = Heartbeats.decode(msg.toString());
       if (heartbeat) handleHeartbeat(heartbeat, rinfo);
     });
   }

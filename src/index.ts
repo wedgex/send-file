@@ -61,24 +61,24 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
-import * as Heartbeat from "./Heartbeat";
-import * as HeartbeatServer from "./Heartbeat/server";
-import * as HeartbeatClient from "./Heartbeat/client";
-import * as User from "./User";
+import * as Heartbeats from "./Heartbeats";
+import * as HeartbeatsServer from "./Heartbeats/server";
+import * as HeartbeatsClient from "./Heartbeats/client";
+import * as Users from "./Users";
 import { AddressInfo } from "dgram";
-const heartbeatServer = HeartbeatServer.create(8383);
-const heartbeatClient = HeartbeatClient.create(8384, 8383);
+const heartbeatServer = HeartbeatsServer.create(8383);
+const heartbeatClient = HeartbeatsClient.create(8384, 8383);
 
-let users: User.User[] = [];
+let users: Users.User[] = [];
 
-heartbeatServer.onHeartbeat((heartbeat: Heartbeat.Heartbeat, rinfo: AddressInfo) => {
-  const user = User.create({
+heartbeatServer.onHeartbeat((heartbeat: Heartbeats.Heartbeat, rinfo: AddressInfo) => {
+  const user = Users.create({
     name: heartbeat.hostname,
     address: rinfo.address,
     port: rinfo.port
   });
 
-  users = User.addOrUpdate(users, user);
+  users = Users.addOrUpdate(users, user);
 
   if (mainWindow) mainWindow.webContents.send("users-updated", users);
 });
@@ -87,7 +87,7 @@ heartbeatServer.bind();
 heartbeatClient.bind();
 
 const heartbeatInterval = setInterval(() => {
-  heartbeatClient.send(Heartbeat.create({}));
+  heartbeatClient.send(Heartbeats.create({}));
 }, 1000);
 
 app.on("window-all-closed", () => {
