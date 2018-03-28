@@ -92,7 +92,7 @@ heartbeatServer.onHeartbeat(
 
     users = Users.addOrUpdate(users, user);
 
-    if (mainWindow) mainWindow.webContents.send("users-updated", users);
+    if (mainWindow) mainWindow.webContents.send(USERS_UPDATED, users);
   }
 );
 
@@ -101,7 +101,7 @@ fileServer.onTransferRequest((filename, accept, request) =>
 );
 
 ipcMain.on(
-  "send-files-to-user",
+  SEND_FILE,
   (
     _: Electron.Event,
     { user, files }: { user: Users.User; files: string[] }
