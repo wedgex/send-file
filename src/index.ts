@@ -1,5 +1,7 @@
 import { app, BrowserWindow } from "electron";
-import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
+import installExtension, {
+  REACT_DEVELOPER_TOOLS
+} from "electron-devtools-installer";
 import { enableLiveReload } from "electron-compile";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -65,41 +67,56 @@ import { ipcMain } from "electron";
 import * as Heartbeats from "./Heartbeats";
 import * as HeartbeatsServer from "./Heartbeats/server";
 import * as HeartbeatsClient from "./Heartbeats/client";
+import * as FileTransfersServer from "./FileTransfers/server";
+import * as FileTransfersClient from "./FileTransfers/client";
 import * as Users from "./Users";
 import { AddressInfo } from "dgram";
 const heartbeatServer = HeartbeatsServer.create(8383);
 const heartbeatClient = HeartbeatsClient.create(8384, 8383);
+const fileServer = FileTransfersServer.create({
+  port: 8385,
+  address: "0.0.0.0"
+});
 
 let users: Users.User[] = [];
 
-heartbeatServer.onHeartbeat((heartbeat: Heartbeats.Heartbeat, rinfo: AddressInfo) => {
-  const user = Users.create({
-    name: heartbeat.hostname,
-    address: rinfo.address,
-    port: rinfo.port
-  });
+heartbeatServer.onHeartbeat(
+  (heartbeat: Heartbeats.Heartbeat, rinfo: AddressInfo) => {
+    const user = Users.create({
+      name: heartbeat.hostname,
+      address: rinfo.address,
+      port: rinfo.port
+    });
 
-  users = Users.addOrUpdate(users, user);
+    users = Users.addOrUpdate(users, user);
 
-  if (mainWindow) mainWindow.webContents.send("users-updated", users);
-});
-
-ipcMain.on(
-  "send-files-to-user",
-  (_: Electron.Event, { user, files }: { user: Users.User; files: string[] }) => {
-    console.log("event", user, files);
+    if (mainWindow) mainWindow.webContents.send("users-updated", users);
   }
 );
 
+fileServer.onTransferRequest((filename, accept, request) =>
+  console.log("recieved", filename)
+);
+
+ipcMain.on(
+  "send-files-to-user",
+  (
+    _: Electron.Event,
+    { user, files }: { user: Users.User; files: string[] }
+  ) => {
+    console.log("event", user, files);
+    const fileClient = FileTransfersClient.create(user.address, user.port);
+    files.forEach(file => {
+      console.log("sending", file);
+      fileClient.sendFile(file);
+    });
+  }
+);
+
+fileServer.start();
 heartbeatServer.bind();
 heartbeatClient.bind();
 
-const heartbeatInterval = setInterval(() => {
+setInterval(() => {
   heartbeatClient.send(Heartbeats.create({}));
 }, 1000);
-
-app.on("window-all-closed", () => {
-  clearInterval(heartbeatInterval);
-  heartbeatServer.close();
-  heartbeatClient.close();
-});

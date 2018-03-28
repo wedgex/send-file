@@ -44,8 +44,18 @@ function createConnection(
   };
 }
 
-export function create({ port = PORT }: { port: number }) {
-  let handleTransferRequest: (filename: string, accept: () => void, reject: () => void) => void;
+export function create({
+  port = PORT,
+  address
+}: {
+  port: number;
+  address: string;
+}) {
+  let handleTransferRequest: (
+    filename: string,
+    accept: () => void,
+    reject: () => void
+  ) => void;
   let handleTransfer: (data: Buffer) => void;
 
   const server = net.createServer((socket: net.Socket) => {
@@ -63,7 +73,7 @@ export function create({ port = PORT }: { port: number }) {
   }
 
   function start() {
-    server.listen(port);
+    server.listen(port, address);
   }
 
   function stop(callback?: Function) {
