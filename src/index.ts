@@ -73,11 +73,12 @@ import * as FileTransfersClient from "./FileTransfers/client";
 import * as Users from "./Users";
 import { SEND_FILE, USERS_UPDATED } from "./app/events";
 
+const FILE_PORT = 8385;
+
 const heartbeatServer = HeartbeatsServer.create(8383);
 const heartbeatClient = HeartbeatsClient.create(8384, 8383);
 const fileServer = FileTransfersServer.create({
-  port: 8385,
-  address: "0.0.0.0"
+  port: FILE_PORT
 });
 
 let users: Users.User[] = [];
@@ -87,7 +88,7 @@ heartbeatServer.onHeartbeat(
     const user = Users.create({
       name: heartbeat.hostname,
       address: rinfo.address,
-      port: rinfo.port
+      port: heartbeat.port
     });
 
     users = Users.addOrUpdate(users, user);
@@ -120,5 +121,9 @@ heartbeatServer.bind();
 heartbeatClient.bind();
 
 setInterval(() => {
-  heartbeatClient.send(Heartbeats.create({}));
+  heartbeatClient.send(
+    Heartbeats.create({
+      port: FILE_PORT
+    })
+  );
 }, 1000);

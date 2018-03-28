@@ -44,13 +44,7 @@ function createConnection(
   };
 }
 
-export function create({
-  port = PORT,
-  address
-}: {
-  port: number;
-  address: string;
-}) {
+export function create({ port = PORT }: { port: number }) {
   let handleTransferRequest: (
     filename: string,
     accept: () => void,
@@ -73,7 +67,7 @@ export function create({
   }
 
   function start() {
-    server.listen(port, address);
+    server.listen(port);
   }
 
   function stop(callback?: Function) {
