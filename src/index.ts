@@ -6,7 +6,7 @@ import { enableLiveReload } from "electron-compile";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: Electron.BrowserWindow | null = null;
+let mainWindow: Electron.BrowserWindow | undefined;
 
 const isDevMode = process.execPath.match(/[\\/]electron/);
 
@@ -35,7 +35,7 @@ const createWindow = async () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null;
+    mainWindow = undefined;
   });
 };
 
@@ -65,6 +65,7 @@ app.on("activate", () => {
 // code. You can also put them in separate files and import them here.
 import { ipcMain } from "electron";
 import { AddressInfo } from "dgram";
+import * as fs from "fs";
 import * as Heartbeats from "./Heartbeats";
 import * as HeartbeatsServer from "./Heartbeats/server";
 import * as HeartbeatsClient from "./Heartbeats/client";
@@ -97,9 +98,42 @@ heartbeatServer.onHeartbeat(
   }
 );
 
-fileServer.onTransferRequest((filename, accept, request) =>
-  console.log("recieved", filename)
-);
+let acceptWindow: BrowserWindow;
+
+app.on("ready", () => {
+  acceptWindow = new BrowserWindow({
+    parent: mainWindow,
+    modal: true,
+    height: 200,
+    width: 400,
+    show: false
+  });
+  acceptWindow.loadURL(`file://${__dirname}/FileTransfer.html`);
+  acceptWindow.webContents.openDevTools();
+});
+
+fileServer.onTransferRequest((filename, accept, reject) => {
+  ipcMain.on("file-transfer-accpet", () => {
+    acceptWindow.hide();
+    accept();
+  });
+  ipcMain.on("file-transfer-reject", () => {
+    acceptWindow.hide();
+    reject();
+  });
+  acceptWindow.webContents.send("recieved-file-request", filename);
+  acceptWindow.show();
+});
+
+fileServer.onTransfer(file => {
+  console.log(file);
+  console.log("here we go");
+  console.log(app.getPath("downloads"));
+  fs.writeFile(app.getPath("downloads") + "/file", file, err => {
+    console.log("done");
+    console.log(err);
+  });
+});
 
 ipcMain.on(
   SEND_FILE,
@@ -107,7 +141,6 @@ ipcMain.on(
     _: Electron.Event,
     { user, files }: { user: Users.User; files: string[] }
   ) => {
-    console.log("event", user, files);
     const fileClient = FileTransfersClient.create(user.address, user.port);
     files.forEach(file => {
       console.log("sending", file);
