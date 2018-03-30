@@ -1,4 +1,5 @@
 import * as React from "react";
+import { default as styled } from "styled-components";
 import { User } from "../../Users";
 import UserComponent from "../../Users/components/User";
 
@@ -11,7 +12,9 @@ export default class MainWindow extends React.Component<Props, undefined> {
     return (
       <div>
         <h2>Users Seen</h2>
-        {this.props.users.map(user => <UserComponent key={user.name} user={user} />)}
+        {this.props.users.map(user => (
+          <UserComponent key={user.name} user={user} />
+        ))}
       </div>
     );
   }
