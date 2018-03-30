@@ -8,15 +8,15 @@ const Container = styled.div`
 `;
 
 type Props = {
-  user: string;
+  userName: string;
   filename: string;
   onAccept: () => void;
   onReject: () => void;
 };
 
-export default ({ user, filename, onAccept, onReject }: Props) => (
+export default ({ userName, filename, onAccept, onReject }: Props) => (
   <Container>
-    <div>{user} is trying to send you</div>
+    <div>{userName} is trying to send you</div>
     <strong>{filename}</strong>
     <div>
       <button onClick={onAccept}>Accept</button>

@@ -69,6 +69,7 @@ import * as fs from "fs";
 import * as Heartbeats from "./Heartbeats";
 import * as HeartbeatsServer from "./Heartbeats/server";
 import * as HeartbeatsClient from "./Heartbeats/client";
+import * as FileTransferRequests from "./FileTransfers/Request";
 import * as FileTransfersServer from "./FileTransfers/server";
 import * as FileTransfersClient from "./FileTransfers/client";
 import * as Users from "./Users";
@@ -112,7 +113,7 @@ app.on("ready", () => {
   //acceptWindow.webContents.openDevTools();
 });
 
-fileServer.onTransferRequest((filename, accept, reject) => {
+fileServer.onTransferRequest(({ filename, address }, accept, reject) => {
   ipcMain.on("file-transfer-accpet", () => {
     acceptWindow.hide();
     accept();
@@ -121,8 +122,15 @@ fileServer.onTransferRequest((filename, accept, reject) => {
     acceptWindow.hide();
     reject();
   });
-  acceptWindow.webContents.send("recieved-file-request", filename);
-  acceptWindow.show();
+
+  const user = Users.findByAddress(users, address);
+  if (user) {
+    const request = FileTransferRequests.create({ user, filename });
+    acceptWindow.webContents.send("recieved-file-request", request);
+    acceptWindow.show();
+  } else {
+    reject();
+  }
 });
 
 fileServer.onTransfer(file => {

@@ -1,14 +1,17 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { FileTransferRequest } from "../FileTransfers/Request";
 import { ipcRenderer } from "electron";
 
-let filename: string;
+let transferRequest: FileTransferRequest;
 
-ipcRenderer.on("recieved-file-request", (_: Electron.Event, fname: string) => {
-  console.log("got", fname);
-  filename = fname;
-  render();
-});
+ipcRenderer.on(
+  "recieved-file-request",
+  (_: Electron.Event, request: FileTransferRequest) => {
+    transferRequest = request;
+    render();
+  }
+);
 
 function acceptFile() {
   ipcRenderer.send("file-transfer-accpet");
@@ -22,12 +25,10 @@ export function render() {
   const FileTransferWindow = require("../Windows/components/FileTransfer")
     .default;
 
-  console.log(filename);
-
   ReactDOM.render(
     <FileTransferWindow
-      user="UserName"
-      filename={filename}
+      filename={transferRequest.filename}
+      userName={transferRequest.user.name}
       onAccept={acceptFile}
       onReject={rejectFile}
     />,

@@ -39,6 +39,13 @@ export function find(users: User[], name: string): User | undefined {
   return users.find(user => user.name === name);
 }
 
+export function findByAddress(
+  users: User[],
+  address: string
+): User | undefined {
+  return users.find(user => user.address === address);
+}
+
 export function sort(users: User[]): User[] {
   return users.sort((a: User, b: User): number => {
     if (isOnline(a) && !isOnline(b)) return -1;
@@ -51,6 +58,7 @@ export function rehydrateDates(users: User[]): User[] {
 }
 
 export function isOnline(user: User): boolean {
-  const lastSeenSecondsAgo = (new Date().getTime() - user.lastSeen.getTime()) / 1000;
+  const lastSeenSecondsAgo =
+    (new Date().getTime() - user.lastSeen.getTime()) / 1000;
   return lastSeenSecondsAgo < 30;
 }

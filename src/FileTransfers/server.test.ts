@@ -20,9 +20,10 @@ describe("FileTransfers/Server", () => {
     server.stop();
   });
 
-  it("gets filename then rejects file transfer", done => {
-    server.onTransferRequest((filename, _, reject) => {
+  it("gets request then rejects file transfer", done => {
+    server.onTransferRequest(({ filename, address }, _, reject) => {
       expect(filename).toBe("test.txt");
+      expect(address).toBe(client.localAddress);
       reject();
     });
 
@@ -38,8 +39,9 @@ describe("FileTransfers/Server", () => {
   it("accepts file transfer then gets file", done => {
     const testFile = fs.readFileSync("./tests/mocks/testFile.txt");
 
-    server.onTransferRequest((filename, accept) => {
+    server.onTransferRequest(({ filename, address }, accept) => {
       expect(filename).toBe("testFile.txt");
+      expect(address).toBe(client.localAddress);
       accept();
     });
 

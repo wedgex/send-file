@@ -3,17 +3,30 @@ import * as FileTransfers from "./index";
 
 const PORT = 8383;
 
+function formatAddress(address: string): string {
+  const parts = address.split(":");
+  return parts[parts.length - 1];
+}
+
 export interface Server {
   start: () => void;
   stop: (callback?: Function) => void;
   onTransferRequest: (
-    handler: (filename: string, accept: () => void, reject: () => void) => void
+    handler: (
+      request: { filename: string; address: string },
+      accept: () => void,
+      reject: () => void
+    ) => void
   ) => void;
   onTransfer: (handler: (data: Buffer) => void) => void;
 }
 
 function createConnection(
-  onRequest: (filename: string, accept: () => void, reject: () => void) => void,
+  onRequest: (
+    request: { filename: string; address: string },
+    accept: () => void,
+    reject: () => void
+  ) => void,
   onFile: (data: Buffer) => void
 ) {
   return (socket: net.Socket) => {
@@ -34,7 +47,12 @@ function createConnection(
 
     const handleFileRequest = (data: Buffer) => {
       filename = data.toString();
-      if (onRequest) onRequest(filename, accept, reject);
+      if (onRequest)
+        onRequest(
+          { filename, address: formatAddress(socket.remoteAddress) },
+          accept,
+          reject
+        );
     };
 
     socket.once("data", handleFileRequest);
@@ -46,7 +64,7 @@ function createConnection(
 
 export function create({ port = PORT }: { port: number }) {
   let handleTransferRequest: (
-    filename: string,
+    request: { filename: string; address: string },
     accept: () => void,
     reject: () => void
   ) => void;
@@ -57,7 +75,11 @@ export function create({ port = PORT }: { port: number }) {
   });
 
   function onTransferRequest(
-    handler: (filename: string, accept: () => void, reject: () => void) => void
+    handler: (
+      request: { filename: string; address: string },
+      accept: () => void,
+      reject: () => void
+    ) => void
   ) {
     handleTransferRequest = handler;
   }
