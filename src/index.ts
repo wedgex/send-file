@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, dialog } from "electron";
 import installExtension, {
   REACT_DEVELOPER_TOOLS
 } from "electron-devtools-installer";
@@ -133,14 +133,18 @@ fileServer.onTransferRequest(({ filename, address }, accept, reject) => {
   }
 });
 
-fileServer.onTransfer(file => {
-  console.log(file);
-  console.log("here we go");
-  console.log(app.getPath("downloads"));
-  fs.writeFile(app.getPath("downloads") + "/file", file, err => {
-    console.log("done");
-    console.log(err);
-  });
+fileServer.onTransfer((name, file) => {
+  if (mainWindow) {
+    dialog.showSaveDialog(
+      mainWindow,
+      {
+        defaultPath: name
+      },
+      filename => {
+        fs.writeFile(filename, file);
+      }
+    );
+  }
 });
 
 ipcMain.on(
@@ -151,7 +155,6 @@ ipcMain.on(
   ) => {
     const fileClient = FileTransfersClient.create(user.address, user.port);
     files.forEach(file => {
-      console.log("sending", file);
       fileClient.sendFile(file);
     });
   }

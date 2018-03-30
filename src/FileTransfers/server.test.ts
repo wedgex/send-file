@@ -51,7 +51,8 @@ describe("FileTransfers/Server", () => {
       client.end();
     });
 
-    server.onTransfer(data => {
+    server.onTransfer((filename, data) => {
+      expect(filename).toEqual("testFile.txt");
       expect(data).toEqual(testFile);
       done();
     });

@@ -19,7 +19,8 @@ describe("FileTransfer Integration", () => {
 
   it("sends and receives file", done => {
     server.onTransferRequest((_, accept) => accept());
-    server.onTransfer((file: Buffer) => {
+    server.onTransfer((filename: string, file: Buffer) => {
+      expect(filename).toEqual("testFile.txt");
       expect(file).toEqual(testFile);
       done();
     });

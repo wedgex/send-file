@@ -18,7 +18,7 @@ export interface Server {
       reject: () => void
     ) => void
   ) => void;
-  onTransfer: (handler: (data: Buffer) => void) => void;
+  onTransfer: (handler: (filename: string, data: Buffer) => void) => void;
 }
 
 function createConnection(
@@ -27,7 +27,7 @@ function createConnection(
     accept: () => void,
     reject: () => void
   ) => void,
-  onFile: (data: Buffer) => void
+  onFile: (filename: string, data: Buffer) => void
 ) {
   return (socket: net.Socket) => {
     let filename: string;
@@ -57,7 +57,8 @@ function createConnection(
 
     socket.once("data", handleFileRequest);
     socket.on("end", () => {
-      if (onFile && fileParts.length) onFile(Buffer.concat(fileParts));
+      if (onFile && fileParts.length)
+        onFile(filename, Buffer.concat(fileParts));
     });
   };
 }
@@ -68,7 +69,7 @@ export function create({ port = PORT }: { port: number }) {
     accept: () => void,
     reject: () => void
   ) => void;
-  let handleTransfer: (data: Buffer) => void;
+  let handleTransfer: (filename: string, data: Buffer) => void;
 
   const server = net.createServer((socket: net.Socket) => {
     createConnection(handleTransferRequest, handleTransfer)(socket);
@@ -84,7 +85,7 @@ export function create({ port = PORT }: { port: number }) {
     handleTransferRequest = handler;
   }
 
-  function onTransfer(hanlder: (data: Buffer) => void) {
+  function onTransfer(hanlder: (filename: string, data: Buffer) => void) {
     handleTransfer = hanlder;
   }
 
