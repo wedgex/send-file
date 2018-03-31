@@ -19,13 +19,27 @@ describe("FileTransfer Integration", () => {
 
   it("sends and receives file", done => {
     server.onTransferRequest((_, accept) => accept());
+    const client = Client.create("localhost", port);
     server.onTransfer((filename: string, file: Buffer) => {
       expect(filename).toEqual("testFile.txt");
       expect(file).toEqual(testFile);
       done();
     });
     server.start();
-    const client = Client.create("localhost", port);
+    client.sendFile(testFilePath);
+  });
+
+  it("can receive multiple files", done => {
+    server.onTransferRequest((_, accept) => accept());
+    server.start();
+    let client = Client.create("localhost", port);
+    client.sendFile(testFilePath);
+    client = Client.create("localhost", port);
+    server.onTransfer((filename: string, file: Buffer) => {
+      expect(filename).toEqual("testFile.txt");
+      expect(file).toEqual(testFile);
+      done();
+    });
     client.sendFile(testFilePath);
   });
 });

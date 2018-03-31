@@ -15,6 +15,9 @@ export function create(address: string, port: number) {
       }
     });
 
+    client.on("end", () => console.log("end"));
+    client.on("close", () => console.log("close"));
+
     client.connect(port, address, () => {
       client.write(basename(filepath));
     });

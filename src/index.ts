@@ -116,16 +116,22 @@ app.on("ready", () => {
 });
 
 fileServer.onTransferRequest(({ filename, address }, accept, reject) => {
-  ipcMain.on(ACCEPT_FILE, () => {
+  const handleAccept = () => {
     acceptWindow.hide();
+    ipcMain.removeListener(REJECT_FILE, handleReject);
     accept();
-  });
-  ipcMain.on(REJECT_FILE, () => {
+  };
+  const handleReject = () => {
     acceptWindow.hide();
+    ipcMain.removeListener(ACCEPT_FILE, handleAccept);
     reject();
-  });
+  };
+
+  ipcMain.once(ACCEPT_FILE, handleAccept);
+  ipcMain.once(REJECT_FILE, handleReject);
 
   const user = Users.findByAddress(users, address);
+
   if (user) {
     acceptWindow.webContents.send(
       RECIEVE_FILE_REQUEST,
