@@ -34,7 +34,6 @@ function createConnection(
     let fileParts: Buffer[] = [];
 
     const accept = () => {
-      console.log(socket.destroyed);
       socket.write(FileTransfers.Response.Yes);
       socket.on("data", handleFile);
     };
