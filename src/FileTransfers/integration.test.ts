@@ -28,18 +28,4 @@ describe("FileTransfer Integration", () => {
     server.start();
     client.sendFile(testFilePath);
   });
-
-  it("can receive multiple files", done => {
-    server.onTransferRequest((_, accept) => accept());
-    server.start();
-    let client = Client.create("localhost", port);
-    client.sendFile(testFilePath);
-    client = Client.create("localhost", port);
-    server.onTransfer((filename: string, file: Buffer) => {
-      expect(filename).toEqual("testFile.txt");
-      expect(file).toEqual(testFile);
-      done();
-    });
-    client.sendFile(testFilePath);
-  });
 });
