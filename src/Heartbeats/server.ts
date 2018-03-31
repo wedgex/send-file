@@ -16,10 +16,7 @@ export function create(port: number = PORT) {
   }
 
   function onHeartbeat(
-    handleHeartbeat: (
-      msg: Heartbeats.Heartbeat,
-      rinfo: dgram.AddressInfo
-    ) => void
+    handleHeartbeat: (msg: Heartbeats.Heartbeat, rinfo: dgram.AddressInfo) => void
   ) {
     server.on("message", (msg, rinfo) => {
       const heartbeat = Heartbeats.decode(msg.toString());

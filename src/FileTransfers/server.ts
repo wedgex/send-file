@@ -48,17 +48,12 @@ function createConnection(
     const handleFileRequest = (data: Buffer) => {
       filename = data.toString();
       if (onRequest)
-        onRequest(
-          { filename, address: formatAddress(socket.remoteAddress) },
-          accept,
-          reject
-        );
+        onRequest({ filename, address: formatAddress(socket.remoteAddress) }, accept, reject);
     };
 
     socket.once("data", handleFileRequest);
     socket.on("end", () => {
-      if (onFile && fileParts.length)
-        onFile(filename, Buffer.concat(fileParts));
+      if (onFile && fileParts.length) onFile(filename, Buffer.concat(fileParts));
     });
   };
 }

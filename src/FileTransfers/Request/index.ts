@@ -10,10 +10,7 @@ export type FileTransferRequestFields = {
   filename: string;
 };
 
-export function create({
-  user,
-  filename
-}: FileTransferRequestFields): FileTransferRequest {
+export function create({ user, filename }: FileTransferRequestFields): FileTransferRequest {
   return {
     user,
     filename

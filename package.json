@@ -9,7 +9,8 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "test": "jest"
+    "test": "jest",
+    "prettier": "prettier **/*.ts --write"
   },
   "keywords": [],
   "author": "hhaydel",
@@ -82,6 +83,7 @@
     "electron-forge": "^5.1.1",
     "electron-prebuilt-compile": "1.8.3",
     "jest": "^22.4.2",
+    "prettier": "^1.11.1",
     "typescript": "~2.2.2"
   }
 }

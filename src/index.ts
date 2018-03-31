@@ -1,7 +1,5 @@
 import { app, BrowserWindow, dialog } from "electron";
-import installExtension, {
-  REACT_DEVELOPER_TOOLS
-} from "electron-devtools-installer";
+import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
 import { enableLiveReload } from "electron-compile";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -91,19 +89,17 @@ const fileServer = FileTransfersServer.create({
 
 let users: Users.User[] = [];
 
-heartbeatServer.onHeartbeat(
-  (heartbeat: Heartbeats.Heartbeat, rinfo: AddressInfo) => {
-    const user = Users.create({
-      name: heartbeat.hostname,
-      address: rinfo.address,
-      port: heartbeat.port
-    });
+heartbeatServer.onHeartbeat((heartbeat: Heartbeats.Heartbeat, rinfo: AddressInfo) => {
+  const user = Users.create({
+    name: heartbeat.hostname,
+    address: rinfo.address,
+    port: heartbeat.port
+  });
 
-    users = Users.addOrUpdate(users, user);
+  users = Users.addOrUpdate(users, user);
 
-    if (mainWindow) mainWindow.webContents.send(USERS_UPDATED, users);
-  }
-);
+  if (mainWindow) mainWindow.webContents.send(USERS_UPDATED, users);
+});
 
 let acceptWindow: BrowserWindow;
 
@@ -157,10 +153,7 @@ fileServer.onTransfer((name, file) => {
 
 ipcMain.on(
   SEND_FILE,
-  (
-    _: Electron.Event,
-    { user, files }: { user: Users.User; files: string[] }
-  ) => {
+  (_: Electron.Event, { user, files }: { user: Users.User; files: string[] }) => {
     const fileClient = FileTransfersClient.create(user.address, user.port);
     files.forEach(file => {
       fileClient.sendFile(file);

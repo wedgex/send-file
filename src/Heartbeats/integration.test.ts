@@ -8,9 +8,7 @@ describe("Heartbeat/Server", () => {
     const client = HeartbeatsClient.create(8385, 8384);
 
     server.onHeartbeat(heartbeat => {
-      expect(heartbeat).toEqual(
-        Heartbeats.create({ hostname: "test-name", port: 1234 })
-      );
+      expect(heartbeat).toEqual(Heartbeats.create({ hostname: "test-name", port: 1234 }));
       client.close(() => server.close(done));
     });
 
