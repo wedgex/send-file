@@ -76,7 +76,8 @@ import {
   REJECT_FILE,
   SEND_FILE,
   RECIEVE_FILE_REQUEST,
-  USERS_UPDATED
+  USERS_UPDATED,
+  SendFilePayload
 } from "./app/events";
 
 const FILE_PORT = 8385;
@@ -157,15 +158,12 @@ fileServer.onTransfer((name, file) => {
   }
 });
 
-ipcMain.on(
-  SEND_FILE,
-  (_: Electron.Event, { user, files }: { user: Users.User; files: string[] }) => {
-    const fileClient = FileTransfersClient.create(user.address, user.port);
-    files.forEach(file => {
-      fileClient.sendFile(file);
-    });
-  }
-);
+ipcMain.on(SEND_FILE, (_: Electron.Event, { user, files }: SendFilePayload) => {
+  const fileClient = FileTransfersClient.create(user.address, user.port);
+  files.forEach(file => {
+    fileClient.sendFile(file);
+  });
+});
 
 fileServer.start();
 heartbeatServer.bind();
