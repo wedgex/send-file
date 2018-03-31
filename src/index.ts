@@ -25,7 +25,7 @@ const createWindow = async () => {
   // Open the DevTools.
   if (isDevMode) {
     await installExtension(REACT_DEVELOPER_TOOLS);
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
   }
 
   // Emitted when the window is closed.
@@ -67,7 +67,7 @@ import * as fs from "fs";
 import * as Heartbeats from "./Heartbeats";
 import * as HeartbeatsServer from "./Heartbeats/server";
 import * as HeartbeatsClient from "./Heartbeats/client";
-import * as FileTransferRequests from "./FileTransfers/Request";
+import * as FileTransferRequests from "./FileTransfers/request";
 import * as FileTransfersServer from "./FileTransfers/server";
 import * as FileTransfersClient from "./FileTransfers/client";
 import * as Users from "./Users";

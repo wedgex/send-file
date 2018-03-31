@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { FileTransferRequest } from "../FileTransfers/Request";
+import { FileTransferRequest } from "../FileTransfers/request";
 import { ipcRenderer } from "electron";
 import { RECIEVE_FILE_REQUEST, ACCEPT_FILE, REJECT_FILE } from "../app/events";
 
