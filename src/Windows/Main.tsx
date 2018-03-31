@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
 import { ipcRenderer } from "electron";
 import { User, rehydrateDates } from "../Users";
-import { USERS_UPDATED } from "./events";
+import { USERS_UPDATED } from "../app/events";
 
 let users: User[] = [];
 
@@ -13,7 +13,7 @@ ipcRenderer.on(USERS_UPDATED, (_: Electron.Event, newUsers: User[]) => {
 });
 
 export function render() {
-  const MainWindow = require("../Windows/components/Main").default;
+  const MainWindow = require("./components/Main").default;
   ReactDOM.render(
     <AppContainer>
       <MainWindow users={users} />

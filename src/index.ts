@@ -20,12 +20,12 @@ const createWindow = async () => {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/Windows/Main.html`);
 
   // Open the DevTools.
   if (isDevMode) {
     await installExtension(REACT_DEVELOPER_TOOLS);
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   }
 
   // Emitted when the window is closed.
@@ -112,7 +112,7 @@ app.on("ready", () => {
     width: 400,
     show: false
   });
-  acceptWindow.loadURL(`file://${__dirname}/FileTransfer.html`);
+  acceptWindow.loadURL(`file://${__dirname}/Windows/FileTransfer.html`);
   //acceptWindow.webContents.openDevTools();
 });
 
