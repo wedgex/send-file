@@ -2,9 +2,11 @@ import * as React from "react";
 import { default as styled } from "styled-components";
 
 const Container = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 `;
 
 type Props = {
