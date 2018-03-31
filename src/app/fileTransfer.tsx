@@ -2,11 +2,12 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { FileTransferRequest } from "../FileTransfers/Request";
 import { ipcRenderer } from "electron";
+import { RECIEVE_FILE_REQUEST, ACCEPT_FILE, REJECT_FILE } from "./events";
 
 let transferRequest: FileTransferRequest;
 
 ipcRenderer.on(
-  "recieved-file-request",
+  RECIEVE_FILE_REQUEST,
   (_: Electron.Event, request: FileTransferRequest) => {
     transferRequest = request;
     render();
@@ -14,11 +15,11 @@ ipcRenderer.on(
 );
 
 function acceptFile() {
-  ipcRenderer.send("file-transfer-accpet");
+  ipcRenderer.send(ACCEPT_FILE);
 }
 
 function rejectFile() {
-  ipcRenderer.send("file-transfer-reject");
+  ipcRenderer.send(REJECT_FILE);
 }
 
 export function render() {

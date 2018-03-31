@@ -8,16 +8,18 @@ export function create(port: number = PORT) {
   const server = dgram.createSocket("udp4");
 
   function bind() {
-    server.bind(port, () => {
+    server.bind({ port }, () => {
       server.addMembership(BROADCAST_IP);
       server.setBroadcast(true);
-      server.setMulticastTTL(128);
       server.setMulticastLoopback(false);
     });
   }
 
   function onHeartbeat(
-    handleHeartbeat: (msg: Heartbeats.Heartbeat, rinfo: dgram.AddressInfo) => void
+    handleHeartbeat: (
+      msg: Heartbeats.Heartbeat,
+      rinfo: dgram.AddressInfo
+    ) => void
   ) {
     server.on("message", (msg, rinfo) => {
       const heartbeat = Heartbeats.decode(msg.toString());

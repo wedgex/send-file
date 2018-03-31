@@ -73,7 +73,13 @@ import * as FileTransferRequests from "./FileTransfers/Request";
 import * as FileTransfersServer from "./FileTransfers/server";
 import * as FileTransfersClient from "./FileTransfers/client";
 import * as Users from "./Users";
-import { SEND_FILE, USERS_UPDATED } from "./app/events";
+import {
+  ACCEPT_FILE,
+  REJECT_FILE,
+  SEND_FILE,
+  RECIEVE_FILE_REQUEST,
+  USERS_UPDATED
+} from "./app/events";
 
 const FILE_PORT = 8385;
 
@@ -114,19 +120,21 @@ app.on("ready", () => {
 });
 
 fileServer.onTransferRequest(({ filename, address }, accept, reject) => {
-  ipcMain.on("file-transfer-accpet", () => {
+  ipcMain.on(ACCEPT_FILE, () => {
     acceptWindow.hide();
     accept();
   });
-  ipcMain.on("file-transfer-reject", () => {
+  ipcMain.on(REJECT_FILE, () => {
     acceptWindow.hide();
     reject();
   });
 
   const user = Users.findByAddress(users, address);
   if (user) {
-    const request = FileTransferRequests.create({ user, filename });
-    acceptWindow.webContents.send("recieved-file-request", request);
+    acceptWindow.webContents.send(
+      RECIEVE_FILE_REQUEST,
+      FileTransferRequests.create({ user, filename })
+    );
     acceptWindow.show();
   } else {
     reject();
