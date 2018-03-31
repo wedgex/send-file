@@ -8,27 +8,21 @@ function formatAddress(address: string): string {
   return parts[parts.length - 1];
 }
 
+export type FileTransferHandler = (filename: string, data: Buffer) => void;
+export type FileTransferRequestHandler = (
+  request: { filename: string; address: string },
+  accept: () => void,
+  reject: () => void
+) => void;
+
 export interface Server {
   start: () => void;
   stop: (callback?: Function) => void;
-  onTransferRequest: (
-    handler: (
-      request: { filename: string; address: string },
-      accept: () => void,
-      reject: () => void
-    ) => void
-  ) => void;
-  onTransfer: (handler: (filename: string, data: Buffer) => void) => void;
+  onTransferRequest: (handler: FileTransferRequestHandler) => void;
+  onTransfer: (handler: FileTransferHandler) => void;
 }
 
-function createConnection(
-  onRequest: (
-    request: { filename: string; address: string },
-    accept: () => void,
-    reject: () => void
-  ) => void,
-  onFile: (filename: string, data: Buffer) => void
-) {
+function createConnection(onRequest: FileTransferRequestHandler, onFile: FileTransferHandler) {
   return (socket: net.Socket) => {
     let filename: string;
     let fileParts: Buffer[] = [];
@@ -59,28 +53,18 @@ function createConnection(
 }
 
 export function create({ port = PORT }: { port: number }) {
-  let handleTransferRequest: (
-    request: { filename: string; address: string },
-    accept: () => void,
-    reject: () => void
-  ) => void;
-  let handleTransfer: (filename: string, data: Buffer) => void;
+  let handleTransferRequest: FileTransferRequestHandler;
+  let handleTransfer: FileTransferHandler;
 
   const server = net.createServer((socket: net.Socket) => {
     createConnection(handleTransferRequest, handleTransfer)(socket);
   });
 
-  function onTransferRequest(
-    handler: (
-      request: { filename: string; address: string },
-      accept: () => void,
-      reject: () => void
-    ) => void
-  ) {
+  function onTransferRequest(handler: FileTransferRequestHandler) {
     handleTransferRequest = handler;
   }
 
-  function onTransfer(hanlder: (filename: string, data: Buffer) => void) {
+  function onTransfer(hanlder: FileTransferHandler) {
     handleTransfer = hanlder;
   }
 
