@@ -97,7 +97,7 @@ heartbeatServer.onHeartbeat((heartbeat: Heartbeats.Heartbeat, rinfo: AddressInfo
     port: heartbeat.port
   });
 
-  users = Users.addOrUpdate(users, user);
+  users = Users.upsert(users, user);
 
   if (mainWindow) mainWindow.webContents.send(USERS_UPDATED, users);
 });

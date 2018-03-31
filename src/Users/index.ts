@@ -5,15 +5,13 @@ export interface User {
   lastSeen: Date;
 }
 
-export function create({
-  name,
-  address,
-  port
-}: {
+export type UserFields = {
   name: string;
   address: string;
   port: number;
-}): User {
+};
+
+export function create({ name, address, port }: UserFields): User {
   return {
     name,
     address,
@@ -22,14 +20,7 @@ export function create({
   };
 }
 
-export function touch(user: User): User {
-  return {
-    ...user,
-    lastSeen: new Date()
-  };
-}
-
-export function addOrUpdate(users: User[], user: User): User[] {
+export function upsert(users: User[], user: User): User[] {
   // TODO name isn't good enough to use as a identifier
   return sort([user, ...users.filter(u => u.name !== user.name)]);
 }
