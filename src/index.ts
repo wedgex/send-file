@@ -113,7 +113,7 @@ app.on("ready", () => {
     show: false
   });
   acceptWindow.loadURL(`file://${__dirname}/Windows/FileTransfer.html`);
-  //acceptWindow.webContents.openDevTools();
+  acceptWindow.webContents.openDevTools();
 });
 
 fileServer.onTransferRequest(({ filename, address }, accept, reject) => {

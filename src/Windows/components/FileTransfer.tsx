@@ -1,5 +1,7 @@
 import * as React from "react";
 import { default as styled } from "styled-components";
+import { SuccessButton, DangerButton } from "../../UI/Buttons";
+import { PrimaryText, SecondaryText } from "../../UI/Text";
 
 const Container = styled.div`
   height: 100%;
@@ -8,6 +10,8 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
+const Actions = styled.div``;
 
 type Props = {
   userName: string;
@@ -18,11 +22,11 @@ type Props = {
 
 export default ({ userName, filename, onAccept, onReject }: Props) => (
   <Container>
-    <div>{userName} is trying to send you</div>
-    <strong>{filename}</strong>
-    <div>
-      <button onClick={onAccept}>Accept</button>
-      <button onClick={onReject}>Reject</button>
-    </div>
+    <SecondaryText>{userName} wants to send you</SecondaryText>
+    <PrimaryText>{filename}</PrimaryText>
+    <Actions>
+      <SuccessButton onClick={onAccept}>Accept</SuccessButton>
+      <DangerButton onClick={onReject}>Reject</DangerButton>
+    </Actions>
   </Container>
 );

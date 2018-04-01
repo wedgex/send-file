@@ -4,6 +4,7 @@ import { default as styled } from "styled-components";
 import { SEND_FILE } from "../../app/events";
 import { User, isOnline } from "../index";
 import { Online, Offline } from "./StatusIndicator";
+import { PrimaryText, SecondaryText } from "../../UI/Text";
 
 type Props = {
   user: User;
@@ -25,18 +26,15 @@ function createDropHanlder(user: User) {
   return (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    sendFiles(
-      user,
-      Array.from(event.dataTransfer.files).map((f: File) => f.path)
-    );
+    sendFiles(user, Array.from(event.dataTransfer.files).map((f: File) => f.path));
   };
 }
 
 export default ({ user }: Props) => (
   <UserContainer onDrop={createDropHanlder(user)}>
-    <strong>{user.name}</strong>
-    <div>{user.address}</div>
+    <PrimaryText>{user.name}</PrimaryText>
+    <SecondaryText>{user.address}</SecondaryText>
     {isOnline(user) ? <Online>Online</Online> : <Offline>Offline</Offline>}
-    <div>{user.lastSeen.toString()}</div>
+    <SecondaryText>{user.lastSeen.toString()}</SecondaryText>
   </UserContainer>
 );

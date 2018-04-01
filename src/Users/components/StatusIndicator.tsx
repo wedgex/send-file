@@ -1,7 +1,8 @@
 import { default as styled, StyledComponentClass } from "styled-components";
+import { SecondaryText } from "../../UI/Text";
 import { HTMLProps } from "react";
 
-const StatusIndicator = styled.div`
+const StatusIndicator = styled(SecondaryText)`
   ::before {
     content: "•";
     margin-right: 5px;
