@@ -1,6 +1,6 @@
 import * as React from "react";
 import { default as styled } from "styled-components";
-import { SuccessButton, DangerButton } from "../../UI/Buttons";
+import { PrimaryButton, SecondaryButton } from "../../UI/Buttons";
 import { PrimaryText, SecondaryText } from "../../UI/Text";
 
 const Container = styled.div`
@@ -25,8 +25,8 @@ export default ({ userName, filename, onAccept, onReject }: Props) => (
     <SecondaryText>{userName} wants to send you</SecondaryText>
     <PrimaryText>{filename}</PrimaryText>
     <Actions>
-      <SuccessButton onClick={onAccept}>Accept</SuccessButton>
-      <DangerButton onClick={onReject}>Reject</DangerButton>
+      <PrimaryButton onClick={onAccept}>Accept</PrimaryButton>
+      <SecondaryButton onClick={onReject}>Reject</SecondaryButton>
     </Actions>
   </Container>
 );
