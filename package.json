@@ -38,8 +38,8 @@
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
       "github_repository": {
-        "owner": "",
-        "name": ""
+        "owner": "wedgex",
+        "name": "send-file"
       },
       "windowsStoreConfig": {
         "packageName": "",
@@ -69,6 +69,7 @@
     "@types/uuid": "^3.4.3",
     "electron-compile": "^6.4.2",
     "electron-devtools-installer": "^2.1.0",
+    "electron-is-dev": "^0.3.0",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",

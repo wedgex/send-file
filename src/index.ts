@@ -1,6 +1,7 @@
-import { app, BrowserWindow, dialog } from "electron";
+import { app, BrowserWindow, dialog, autoUpdater } from "electron";
 import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
 import { enableLiveReload } from "electron-compile";
+import * as isDev from "electron-is-dev";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -80,6 +81,17 @@ import {
   USERS_UPDATED,
   SendFilePayload
 } from "./app/events";
+
+if (!isDev) {
+  const server = "https://send-file.herokuapp.com";
+  const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
+
+  autoUpdater.setFeedURL(feed);
+
+  setInterval(() => {
+    autoUpdater.checkForUpdates();
+  }, 60000);
+}
 
 initAppData();
 
