@@ -1,7 +1,7 @@
 {
   "name": "send-file",
   "productName": "send-file",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "My Electron application description",
   "main": "src/index.ts",
   "scripts": {
