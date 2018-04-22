@@ -1,4 +1,5 @@
 export interface User {
+  id: string;
   name: string;
   address: string;
   port: number;
@@ -6,13 +7,15 @@ export interface User {
 }
 
 export type UserFields = {
+  id: string;
   name: string;
   address: string;
   port: number;
 };
 
-export function create({ name, address, port }: UserFields): User {
+export function create({ id, name, address, port }: UserFields): User {
   return {
+    id,
     name,
     address,
     port,
@@ -21,13 +24,11 @@ export function create({ name, address, port }: UserFields): User {
 }
 
 export function upsert(users: User[], user: User): User[] {
-  // TODO name isn't good enough to use as a identifier
-  return sort([user, ...users.filter(u => u.name !== user.name)]);
+  return sort([user, ...users.filter(u => u.id !== user.id)]);
 }
 
-// TODO name isn't really unique but will do for now.
-export function find(users: User[], name: string): User | undefined {
-  return users.find(user => user.name === name);
+export function find(users: User[], id: string): User | undefined {
+  return users.find(user => user.id === id);
 }
 
 export function findByAddress(users: User[], address: string): User | undefined {

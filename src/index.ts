@@ -64,6 +64,7 @@ app.on("activate", () => {
 import { ipcMain } from "electron";
 import { AddressInfo } from "dgram";
 import * as fs from "fs";
+import { init as initAppData, readUserId } from "./app/appData";
 import * as Heartbeats from "./Heartbeats";
 import * as HeartbeatsServer from "./Heartbeats/server";
 import * as HeartbeatsClient from "./Heartbeats/client";
@@ -80,6 +81,8 @@ import {
   SendFilePayload
 } from "./app/events";
 
+initAppData();
+
 const FILE_PORT = 8385;
 
 const heartbeatServer = HeartbeatsServer.create(8383);
@@ -89,9 +92,12 @@ const fileServer = FileTransfersServer.create({
 });
 
 let users: Users.User[] = [];
+let userId: string = readUserId();
 
 heartbeatServer.onHeartbeat((heartbeat: Heartbeats.Heartbeat, rinfo: AddressInfo) => {
+  if (heartbeat.userId === userId) return;
   const user = Users.create({
+    id: heartbeat.userId,
     name: heartbeat.hostname,
     address: rinfo.address,
     port: heartbeat.port
@@ -152,7 +158,7 @@ fileServer.onTransfer((name, file) => {
         defaultPath: name
       },
       filename => {
-        fs.writeFile(filename, file);
+        fs.writeFile(filename, file, _err => {});
       }
     );
   }
@@ -172,6 +178,7 @@ heartbeatClient.bind();
 setInterval(() => {
   heartbeatClient.send(
     Heartbeats.create({
+      userId,
       port: FILE_PORT
     })
   );

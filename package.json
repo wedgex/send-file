@@ -66,6 +66,7 @@
     "@types/react": "^0.14.55",
     "@types/react-dom": "^0.14.20",
     "@types/react-hot-loader": "^3.0.6",
+    "@types/uuid": "^3.4.3",
     "electron-compile": "^6.4.2",
     "electron-devtools-installer": "^2.1.0",
     "electron-squirrel-startup": "^1.0.0",
@@ -73,7 +74,8 @@
     "react-dom": "^15.4.1",
     "react-hot-loader": "^3.0.0-beta.6",
     "styled-components": "^3.2.3",
-    "tslib": "^1.4.0"
+    "tslib": "^1.4.0",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "@types/jest": "^22.2.0",

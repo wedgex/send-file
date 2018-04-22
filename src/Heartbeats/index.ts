@@ -1,12 +1,14 @@
 import { hostname as osHostname } from "os";
 
 export interface Heartbeat {
+  userId: string;
   type: "heartbeat";
   hostname: string;
   port: number;
 }
 
 export type HeartbeatFields = {
+  userId: string;
   hostname?: string;
   port: number;
 };
@@ -14,6 +16,7 @@ export type HeartbeatFields = {
 export function create(fields: HeartbeatFields): Heartbeat {
   return {
     type: "heartbeat",
+    userId: fields.userId,
     hostname: fields.hostname || osHostname(),
     port: fields.port
   };
